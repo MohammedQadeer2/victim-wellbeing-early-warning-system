@@ -1,0 +1,68 @@
+// Mock case data for prototype demonstration
+// Legal case information tied to victims
+
+import { Case } from '@/types';
+
+export const mockCases: Case[] = [
+  {
+    id: 'CASE-2026-001',
+    victimId: 'V-1001',
+    caseType: 'Domestic Violence',
+    status: 'Trial',
+    registrationDate: '2026-01-15',
+    lastUpdated: '2026-09-01',
+    district: 'District A',
+    court: 'District Court A',
+    nextHearingDate: '2026-09-20',
+    stage: 'Trial',
+    assignedOfficer: 'Officer A',
+  },
+  {
+    id: 'CASE-2026-002',
+    victimId: 'V-1002',
+    caseType: 'Sexual Harassment',
+    status: 'Under Investigation',
+    registrationDate: '2026-02-20',
+    lastUpdated: '2026-08-28',
+    district: 'District B',
+    stage: 'Investigation',
+    assignedOfficer: 'Officer B',
+  },
+  {
+    id: 'CASE-2026-003',
+    victimId: 'V-1003',
+    caseType: 'Assault',
+    status: 'Chargesheet Filed',
+    registrationDate: '2026-03-05',
+    lastUpdated: '2026-09-03',
+    district: 'District A',
+    court: 'District Court A',
+    nextHearingDate: '2026-09-15',
+    stage: 'Pre-Trial',
+    assignedOfficer: 'Officer A',
+  },
+  {
+    id: 'CASE-2026-004',
+    victimId: 'V-1004',
+    caseType: 'Trafficking',
+    status: 'Trial',
+    registrationDate: '2026-04-12',
+    lastUpdated: '2026-09-04',
+    district: 'District C',
+    court: 'High Court C',
+    nextHearingDate: '2026-09-25',
+    stage: 'Trial',
+    assignedOfficer: 'Officer C',
+  },
+  {
+    id: 'CASE-2026-005',
+    victimId: 'V-1005',
+    caseType: 'Domestic Violence',
+    status: 'Registered',
+    registrationDate: '2026-05-18',
+    lastUpdated: '2026-09-02',
+    district: 'District B',
+    stage: 'Investigation',
+    assignedOfficer: 'Officer B',
+  },
+];
