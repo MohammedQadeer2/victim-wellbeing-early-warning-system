@@ -1,0 +1,75 @@
+// Navbar component
+// Top navigation bar with user info and demo indicator
+
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+interface NavbarProps {
+  userName?: string;
+  userRole?: string;
+  showDemo?: boolean;
+}
+
+export function Navbar({ userName, userRole, showDemo = true }: NavbarProps) {
+  const router = useRouter();
+  
+  // Handle logout (demo mode)
+  const handleLogout = () => {
+    router.push('/login');
+  };
+  
+  return (
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo and title */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-xl font-bold">S</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Sentinel</h1>
+                {showDemo && (
+                  <span className="demo-badge text-xs">Prototype Demo</span>
+                )}
+              </div>
+            </Link>
+          </div>
+          
+          {/* User info and actions */}
+          {userName && (
+            <div className="flex items-center space-x-4">
+              {/* User info */}
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-gray-900">{userName}</p>
+                {userRole && (
+                  <p className="text-xs text-gray-600 capitalize">{userRole}</p>
+                )}
+              </div>
+              
+              {/* User avatar */}
+              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-gray-600 font-medium text-sm">
+                  {userName?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              
+              {/* Logout button */}
+              <button
+                onClick={handleLogout}
+                className="text-sm text-gray-600 hover:text-gray-900 transition-smooth"
+                aria-label="Logout"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
