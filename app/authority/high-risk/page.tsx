@@ -11,17 +11,29 @@ import { RiskBadge, TrendBadge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingState';
 import { AUTHORITY_NAV_ITEMS, DEMO_USERS } from '@/constants';
 import { getHighRiskCases } from '@/services/api';
-import { formatDate } from '@/utils/formatting';
+// Import proper types from our type system
+import { RiskLevel, TrendDirection } from '@/types';
 
 export default function HighRiskCasesPage() {
   const [loading, setLoading] = useState(true);
-  const [cases, setCases] = useState<any[]>([]);
+  // TypeScript: Using proper types to match the data from API
+  // Since getHighRiskCases returns data from our API, we need to use a flexible type
+  const [cases, setCases] = useState<Array<{
+    victim: { id: string; name: string; district: string; assignedCounsellor?: string };
+    case: { id: string; caseType: string; stage: string; status: string };
+    riskLevel: RiskLevel;  // Using RiskLevel type which accepts the string values
+    distressScore: number;
+    trend: TrendDirection;  // Using TrendDirection type
+  }>>([]);
   
   useEffect(() => {
     async function loadData() {
       try {
+        // Get data from API
         const data = await getHighRiskCases();
-        setCases(data);
+        // TypeScript: Cast the data to our expected type
+        // The API returns string values that we know are valid risk levels
+        setCases(data as typeof cases);
       } catch (error) {
         console.error('Error loading high-risk cases:', error);
       } finally {

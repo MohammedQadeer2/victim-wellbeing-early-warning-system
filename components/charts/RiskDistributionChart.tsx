@@ -28,8 +28,12 @@ export function RiskDistributionChart({ data, height = 300 }: RiskDistributionCh
     percentage: item.percentage,
   }));
   
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  // Custom tooltip component
+  // TypeScript: Define proper types for tooltip props instead of 'any'
+  // 'active' tells us if the tooltip is currently showing
+  // 'payload' contains the data for the hovered chart section
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; value: number; percentage: number } }> }) => {
+    // Only show tooltip if it's active and has data
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -49,8 +53,9 @@ export function RiskDistributionChart({ data, height = 300 }: RiskDistributionCh
     return null;
   };
   
-  // Custom label
-  const renderLabel = (entry: any) => {
+  // Custom label function to show percentage on pie chart
+  // TypeScript: Define proper type for entry parameter
+  const renderLabel = (entry: { percentage: number }) => {
     return `${entry.percentage.toFixed(0)}%`;
   };
   

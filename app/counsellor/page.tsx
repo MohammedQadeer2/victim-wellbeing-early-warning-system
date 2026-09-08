@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingState';
 import { COUNSELLOR_NAV_ITEMS, DEMO_USERS } from '@/constants';
 import { getCounsellorDashboard } from '@/services/api';
-import { CounsellorDashboardStats, CaseRequiringAttention } from '@/types';
+// Import TrendDirection type for proper TypeScript typing
+import { CounsellorDashboardStats, CaseRequiringAttention, TrendDirection } from '@/types';
 import { formatDate } from '@/utils/formatting';
 
 export default function CounsellorDashboardPage() {
@@ -196,7 +197,9 @@ export default function CounsellorDashboardPage() {
                       <RiskBadge level={item.riskLevel} size="sm" />
                     </td>
                     <td className="px-4 py-4">
-                      <TrendBadge trend={item.trend as any} size="sm" />
+                      {/* TypeScript: Cast to TrendDirection type */}
+                      {/* TrendDirection accepts: 'STABLE' | 'INCREASING' | 'DECREASING' */}
+                      <TrendBadge trend={item.trend as TrendDirection} size="sm" />
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-600">
                       {formatDate(item.lastCheckIn)}
@@ -262,7 +265,8 @@ export default function CounsellorDashboardPage() {
       {/* Today's Activity Summary */}
       <Card className="mt-8 bg-blue-50 border-blue-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-3">
-          Today's Activity
+          {/* Using &apos; to escape apostrophe in JSX */}
+          Today&apos;s Activity
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div>

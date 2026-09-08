@@ -16,7 +16,14 @@ import { ResponseLevel } from '@/types';
 
 export default function CheckInPage() {
   const router = useRouter();
-  const [questions, setQuestions] = useState<any[]>([]);
+  // TypeScript: Using proper type for questions array instead of 'any'
+  // Each question has an id, question text, description, and weight
+  const [questions, setQuestions] = useState<Array<{
+    id: string;
+    question: string;
+    description: string;
+    weight: number;
+  }>>([]);
   const [responses, setResponses] = useState<Record<string, ResponseLevel>>({});
   const [textResponse, setTextResponse] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
@@ -123,15 +130,17 @@ export default function CheckInPage() {
       >
         {submitting && <LoadingOverlay message="Analyzing your responses..." />}
         
+        {/* Using &apos; to escape apostrophe in description */}
         <PageHeader
           title="Additional Information"
-          description="Share anything else you'd like us to know (optional)"
+          description="Share anything else you&apos;d like us to know (optional)"
         />
         
         <Card>
           <div className="mb-6">
+            {/* Using &apos; for apostrophes to avoid JSX escape errors */}
             <label className="block text-base font-medium text-gray-900 mb-3">
-              Is there anything else you'd like to tell us about how you're feeling?
+              Is there anything else you&apos;d like to tell us about how you&apos;re feeling?
             </label>
             <textarea
               value={textResponse}

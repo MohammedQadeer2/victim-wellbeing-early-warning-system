@@ -55,8 +55,9 @@ export default function SupportPage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Emergency Support
             </h3>
+            {/* Using &apos; to escape apostrophes - prevents "unescaped entity" errors */}
             <p className="text-base text-gray-700 mb-4">
-              If you're in immediate danger or experiencing a crisis, please contact emergency services.
+              If you&apos;re in immediate danger or experiencing a crisis, please contact emergency services.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button variant="danger" size="lg">
@@ -121,8 +122,9 @@ export default function SupportPage() {
         <h3 className="text-lg font-semibold text-gray-900 mb-3">
           Need Help Choosing?
         </h3>
+        {/* Using &apos; for apostrophes to avoid JSX escape issues */}
         <p className="text-base text-gray-700 mb-4">
-          If you're not sure which service is right for you, our counsellors can help guide you to the appropriate support.
+          If you&apos;re not sure which service is right for you, our counsellors can help guide you to the appropriate support.
         </p>
         <Button variant="primary">
           Talk to a Counsellor

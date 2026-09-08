@@ -21,17 +21,33 @@ export function DistressTrendChart({ data, height = 300 }: DistressTrendChartPro
     risk: item.riskLevel,
   }));
   
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  // Custom tooltip component for showing details when hovering over chart
+  // TypeScript: Define proper types instead of 'any' to avoid deployment errors
+  // 'active' - boolean telling if tooltip should show
+  // 'payload' - array containing the data for the point being hovered
+  const CustomTooltip = ({ 
+    active, 
+    payload 
+  }: { 
+    active?: boolean; 
+    payload?: Array<{ 
+      payload: { date: string; score: number; risk: string }; 
+      value: number 
+    }> 
+  }) => {
+    // Only display tooltip if it's active and has data
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+          {/* Show the date */}
           <p className="text-sm font-medium text-gray-900 mb-1">
             {payload[0].payload.date}
           </p>
+          {/* Show the distress score */}
           <p className="text-sm text-gray-700">
             Distress Score: <span className="font-semibold">{payload[0].value}</span>
           </p>
+          {/* Show the risk level */}
           <p className="text-xs text-gray-600 mt-1">
             Risk: {payload[0].payload.risk}
           </p>
