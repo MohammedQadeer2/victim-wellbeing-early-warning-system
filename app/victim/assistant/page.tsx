@@ -244,9 +244,9 @@ export default function AIAssistantPage() {
       navItems={VICTIM_NAV_ITEMS}
     >
       {/* ========================================
-          MAIN CONTAINER - Full height layout
+          MAIN CONTAINER - Comfortable chat size (like ChatGPT/Gemini)
           ======================================== */}
-      <div className="flex flex-col" style={{ height: 'calc(100vh - 180px)' }}>
+      <div className="flex flex-col h-full max-w-5xl mx-auto w-full" style={{ minHeight: '600px', maxHeight: 'calc(100vh - 140px)' }}>
         
         {/* ========================================
             HEADER SECTION - Title & Info
@@ -276,11 +276,11 @@ export default function AIAssistantPage() {
         </div>
         
         {/* ========================================
-            CHAT MESSAGES AREA - Scrollable
+            CHAT MESSAGES AREA - Scrollable (ChatGPT-like sizing)
             ======================================== */}
-        <div className="flex-1 overflow-hidden mb-3">
+        <div className="flex-1 overflow-hidden mb-4">
           <Card className="h-full" padding="none">
-            <div className="h-full overflow-y-auto p-3 sm:p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
+            <div className="h-full overflow-y-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 bg-gradient-to-b from-gray-50 to-white">
               
               {/* Loop through all messages */}
               {messages.map((message) => (
@@ -290,23 +290,23 @@ export default function AIAssistantPage() {
                 >
                   {/* AI Avatar (shown on left for AI messages) */}
                   {message.sender === 'ai' && (
-                    <div className="flex-shrink-0 mr-2">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
                         AI
                       </div>
                     </div>
                   )}
                   
-                  {/* Message bubble */}
+                  {/* Message bubble - Larger, more comfortable sizing */}
                   <div
-                    className={`max-w-[80%] sm:max-w-[75%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 shadow-sm ${
+                    className={`max-w-[85%] md:max-w-3xl rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-sm ${
                       message.sender === 'user'
                         ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-none'
                         : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
                     }`}
                   >
-                    {/* Message text */}
-                    <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
+                    {/* Message text - Comfortable reading size */}
+                    <p className="text-base sm:text-lg leading-relaxed whitespace-pre-wrap break-words">
                       {message.content}
                     </p>
                     
@@ -325,8 +325,8 @@ export default function AIAssistantPage() {
                   
                   {/* User Avatar (shown on right for user messages) */}
                   {message.sender === 'user' && (
-                    <div className="flex-shrink-0 ml-2">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
+                    <div className="flex-shrink-0 ml-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
                         {DEMO_USERS.VICTIM.name.charAt(0)}
                       </div>
                     </div>
@@ -337,16 +337,16 @@ export default function AIAssistantPage() {
               {/* Typing indicator (shown when AI is typing) */}
               {isTyping && (
                 <div className="flex justify-start animate-fadeIn">
-                  <div className="flex-shrink-0 mr-2">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
                       AI
                     </div>
                   </div>
-                  <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
+                  <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-5 py-4 shadow-sm">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
+                      <div className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" />
+                      <div className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                      <div className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
                     </div>
                   </div>
                 </div>
@@ -359,11 +359,11 @@ export default function AIAssistantPage() {
         </div>
         
         {/* ========================================
-            INPUT AREA - Text & Voice Input
+            INPUT AREA - Text & Voice Input (ChatGPT-like)
             ======================================== */}
         <div className="flex-shrink-0">
           <Card padding="none">
-            <div className="p-3 sm:p-4">
+            <div className="p-4 sm:p-5">
               
               {/* Voice listening indicator (shown when recording) */}
               {isListening && (
@@ -378,17 +378,17 @@ export default function AIAssistantPage() {
               {/* Input row with textarea and buttons */}
               <div className="flex items-end space-x-2">
                 
-                {/* Textarea for typing */}
+                {/* Textarea for typing - Larger, more comfortable */}
                 <div className="flex-1">
                   <textarea
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type your message..."
-                    rows={2}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base text-gray-900 placeholder-gray-400 resize-none transition-all"
-                    style={{ minHeight: '60px', maxHeight: '120px' }}
+                    placeholder="Message AI Assistant..."
+                    rows={1}
+                    className="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base sm:text-lg text-gray-900 placeholder-gray-500 resize-none transition-all leading-relaxed"
+                    style={{ minHeight: '60px', maxHeight: '200px' }}
                     disabled={isTyping || isListening}
                   />
                 </div>
@@ -425,11 +425,11 @@ export default function AIAssistantPage() {
               </div>
               
               {/* Helper text */}
-              <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-gray-500 space-y-1 sm:space-y-0">
+              <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs sm:text-sm text-gray-500 space-y-1 sm:space-y-0">
                 <span>💡 Enter to send • Shift+Enter for new line</span>
                 <span className="flex items-center space-x-1">
                   <span>🎤</span>
-                  <span className="hidden sm:inline">Voice available</span>
+                  <span>Voice input available</span>
                 </span>
               </div>
             </div>
