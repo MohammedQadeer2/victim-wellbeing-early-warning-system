@@ -9,7 +9,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #99ccff;
     --foreground: #ededed;
   }
 }
@@ -89,6 +89,73 @@ button {
 /* Smooth transitions */
 .transition-smooth {
   transition: all 0.2s ease-in-out;
+}
+
+/* ============================================================================ */
+/* MOBILE LAYOUT FIXES - Media Query @media (max-width: 768px)                 */
+/* ============================================================================ */
+/* STRICT: Only targets specific elements. No global page padding.              */
+/* Desktop view remains 100% untouched. */
+
+@media (max-width: 768px) {
+  /* Fix 1: Page Header titles/subtitles - Add horizontal padding */
+  .mb-6 {
+    padding-left: 1rem;  /* px-4 = 16px */
+    padding-right: 1rem;
+  }
+  
+  /* Alt: If PageHeader wrapper uses different class, add to h1/p directly */
+  h1.text-2xl,
+  h1.text-3xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Description paragraphs under headers */
+  h1.text-2xl + p,
+  h1.text-3xl + p {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Fix 2: Questionnaire progress header - Add padding */
+  /* Target progress bar and step text containers */
+  .mb-4 .flex.items-center.justify-between,
+  .text-sm.text-gray-600 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Progress bar itself */
+  .bg-gray-200.rounded-full {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  
+  /* Fix 3: Full-width cards - Add margins/padding */
+  /* Dashboard cards grid */
+  .grid.grid-cols-1 > div,
+  .grid.grid-cols-1.gap-4 > div,
+  .grid.grid-cols-1.gap-6 > div {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Card list items */
+  .space-y-4 > div,
+  .space-y-6 > div {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  
+  /* Cards that span full width */
+  .w-full.rounded-lg,
+  .w-full.rounded-xl {
+    margin-left: auto;
+    margin-right: auto;
+    width: calc(100% - 2rem);  /* Subtract 16px left + 16px right */
+    max-width: calc(100% - 2rem);
+  }
 }
 
 /* Demo mode indicator */
