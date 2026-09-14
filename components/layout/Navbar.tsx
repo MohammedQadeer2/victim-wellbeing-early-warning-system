@@ -25,7 +25,7 @@ export function Navbar({ userName, userRole, showDemo = true, onLogoClick }: Nav
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
       <div className="px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 min-w-0 overflow-x-auto">
           {/* Logo and title */}
           <div className="flex items-center">
             {/* Mobile: Logo triggers sidebar */}
@@ -64,18 +64,18 @@ export function Navbar({ userName, userRole, showDemo = true, onLogoClick }: Nav
           
           {/* User info and actions */}
           {userName && (
-            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-shrink-0 min-w-max">
               {/* User info */}
               <div className="text-right hidden sm:block">
-                <p className="text-xs sm:text-sm font-medium text-gray-900">{userName}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">{userName}</p>
                 {userRole && (
-                  <p className="text-xs text-gray-600 capitalize">{userRole}</p>
+                  <p className="text-xs text-gray-600 capitalize truncate">{userRole}</p>
                 )}
               </div>
               
               {/* User avatar */}
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-gray-600 font-medium text-xs sm:text-sm">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-gray-600 font-medium text-xs">
                   {userName?.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -83,7 +83,7 @@ export function Navbar({ userName, userRole, showDemo = true, onLogoClick }: Nav
               {/* Logout button */}
               <button
                 onClick={handleLogout}
-                className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 transition-smooth whitespace-nowrap"
+                className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 transition-smooth whitespace-nowrap pl-1 sm:pl-2"
                 aria-label="Logout"
               >
                 Logout
