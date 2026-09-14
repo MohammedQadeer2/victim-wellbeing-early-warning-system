@@ -79,7 +79,7 @@ export function MobileSidebarToggle({
   );
 }
 
-// Mobile sidebar overlay
+// Mobile sidebar overlay with smooth animation
 export function MobileSidebar({
   isOpen,
   onClose,
@@ -89,19 +89,75 @@ export function MobileSidebar({
   onClose: () => void;
   navItems: NavItem[];
 }) {
-  if (!isOpen) return null;
+  const pathname = usePathname();
+  
+  // Check if link is active
+  const isActive = (href: string) => {
+    return pathname === href || pathname?.startsWith(href + '/');
+  };
   
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - fades in/out */}
       <div
-        className="lg:hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-40"
+        className={`lg:hidden fixed inset-0 bg-black transition-opacity duration-300 z-40 ${
+          isOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={onClose}
+        aria-hidden="true"
       />
       
-      {/* Sidebar */}
-      <div className="lg:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 shadow-xl">
-        <Sidebar navItems={navItems} />
+      {/* Sidebar - slides in from left */}
+      <div
+        className={`lg:hidden fixed inset-y-0 left-0 w-72 sm:w-80 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white text-xl font-bold">S</span>
+            </div>
+            <h2 className="text-lg font-bold text-gray-900">Menu</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Close menu"
+          >
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* Navigation */}
+        <nav className="p-4 space-y-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 80px)' }}>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={`
+                  flex items-center px-4 py-3.5 rounded-xl text-base font-medium transition-all
+                  ${active
+                    ? 'bg-blue-50 text-blue-700 border-2 border-blue-200 shadow-sm'
+                    : 'text-gray-700 hover:bg-gray-50 border-2 border-transparent'
+                  }
+                `}
+              >
+                {item.icon && (
+                  <span className="mr-3 text-xl">{item.icon}</span>
+                )}
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </>
   );

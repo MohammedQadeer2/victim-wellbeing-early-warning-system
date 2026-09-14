@@ -73,7 +73,7 @@ export function DashboardLayout({
         </div>
         
         {/* Main content area - Full height, proper overflow */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto w-full">
           {children}
         </main>
       </div>

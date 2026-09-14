@@ -158,6 +158,69 @@ button {
   }
 }
 
+/* ============================================================================ */
+/* LARGE DESKTOP LAYOUT OPTIMIZATION - @media (min-width: 1536px)              */
+/* ============================================================================ */
+/* Adds max-width constraint and centered padding for large screens.            */
+/* Prevents content from stretching too wide. Mobile/tablet unchanged.          */
+
+@media (min-width: 1536px) {
+  /* Fix 1: Page Header - Constrain max-width and add padding */
+  .mb-6.px-4 {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;  /* px-8 = 32px */
+    padding-right: 2rem;
+  }
+  
+  /* Fix 2: Main content containers - Max-width constraint */
+  main.flex-1 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* Fix 3: Dashboard card grids - Constrain and center */
+  .grid.grid-cols-3,
+  .grid.grid-cols-4,
+  .grid.gap-6,
+  .grid.gap-8 {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* Fix 4: Card containers - Better spacing on large screens */
+  .space-y-6 {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* Fix 5: Dashboard layout wrappers */
+  .max-w-4xl {
+    max-width: 1400px;
+  }
+  
+  .max-w-5xl {
+    max-width: 1400px;
+  }
+  
+  .max-w-6xl {
+    max-width: 1400px;
+  }
+  
+  /* Fix 6: Full-bleed cards get horizontal breathing room */
+  .w-full {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 /* Demo mode indicator */
 .demo-badge {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

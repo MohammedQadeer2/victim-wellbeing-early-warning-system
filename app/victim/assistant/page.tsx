@@ -135,8 +135,8 @@ export default function AIAssistantPage() {
       <div className="h-screen flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
         
         {/* SCROLLABLE chat messages - ONLY THIS AREA SCROLLS */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6">
+          <div className="max-w-4xl mx-auto w-full">
             
             {/* Watermark */}
             {messages.filter(m => m.sender === 'user').length === 0 && (
@@ -164,14 +164,14 @@ export default function AIAssistantPage() {
                   
                   {/* Message bubble */}
                   <div
-                    className={`max-w-[70%] rounded-2xl px-5 py-3 shadow-sm ${
+                    className={`max-w-[85%] sm:max-w-[75%] md:max-w-[70%] rounded-2xl px-3 sm:px-4 md:px-5 py-2 sm:py-3 shadow-sm ${
                       message.sender === 'user'
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-900 border border-gray-200'
                     }`}
                   >
-                    <p className="text-base leading-relaxed">{message.content}</p>
-                    <p className={`text-xs mt-1.5 ${message.sender === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
+                    <p className="text-sm sm:text-base leading-relaxed">{message.content}</p>
+                    <p className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       {message.isVoice && ' 🎤'}
                     </p>
@@ -209,7 +209,7 @@ export default function AIAssistantPage() {
         
         {/* FIXED INPUT - Compact, at bottom, no padding issues */}
         <div className="flex-shrink-0 bg-white border-t border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <div className="max-w-4xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 w-full">
             
             {/* Listening indicator */}
             {isListening && (
@@ -221,7 +221,7 @@ export default function AIAssistantPage() {
             {/* Input row */}
             <div className="flex items-end gap-2">
               {/* Textarea */}
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <textarea
                   ref={inputRef}
                   value={inputValue}
@@ -229,8 +229,8 @@ export default function AIAssistantPage() {
                   onKeyDown={handleKeyDown}
                   placeholder="Message AI Assistant..."
                   rows={1}
-                  className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-base text-gray-900 placeholder-gray-400"
-                  style={{ minHeight: '44px', maxHeight: '100px' }}
+                  className="w-full px-3 sm:px-4 py-2 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm sm:text-base text-gray-900 placeholder-gray-400"
+                  style={{ minHeight: '40px', maxHeight: '100px' }}
                   disabled={isTyping || isListening}
                 />
               </div>
@@ -239,14 +239,14 @@ export default function AIAssistantPage() {
               <button
                 onClick={handleVoiceInput}
                 disabled={isTyping}
-                className={`p-2.5 rounded-lg transition-all ${
+                className={`p-2 rounded-lg transition-all flex-shrink-0 ${
                   isRecording
                     ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
                     : 'bg-gradient-to-br from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white'
                 } disabled:opacity-50`}
                 title="Voice input"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
                 </svg>
               </button>
@@ -255,10 +255,10 @@ export default function AIAssistantPage() {
               <button
                 onClick={handleSend}
                 disabled={!inputValue.trim() || isTyping || isListening}
-                className="p-2.5 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all disabled:opacity-50"
+                className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all disabled:opacity-50 flex-shrink-0"
                 title="Send"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                 </svg>
               </button>
@@ -266,7 +266,7 @@ export default function AIAssistantPage() {
             
             {/* Helper text */}
             <p className="text-xs text-gray-500 text-center mt-1">
-              Enter to send • Shift+Enter for new line
+              Enter to send • Shift+Enter
             </p>
           </div>
         </div>
