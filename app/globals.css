@@ -221,6 +221,42 @@ button {
   }
 }
 
+/* ============================================================================ */
+/* ALIGNMENT FIXES - Progress bar, stat cards, and watermark spacing           */
+/* ============================================================================ */
+
+/* Fix: Progress bar header alignment - flex with space-between */
+.flex.items-center.justify-between {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Fix: Stat cards - ensure they stay within padding */
+.grid.grid-cols-2,
+.grid.grid-cols-4 {
+  width: 100%;
+}
+
+.grid.grid-cols-2 > div,
+.grid.grid-cols-4 > div {
+  min-width: 0;  /* Prevents overflow */
+}
+
+/* Fix: Progress bar should be full width of container */
+.bg-gray-200.rounded-full {
+  width: 100%;
+}
+
+/* Fix: AI Assistant watermark - reduce top padding */
+@media (max-width: 768px) {
+  /* Watermark container on mobile */
+  .flex.items-center.justify-center.min-h {
+    min-height: 40vh !important;  /* Reduce from 60vh */
+  }
+}
+
 /* Demo mode indicator */
 .demo-badge {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

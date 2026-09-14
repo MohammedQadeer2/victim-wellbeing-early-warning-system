@@ -135,16 +135,16 @@ export default function AIAssistantPage() {
       <div className="h-screen flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
         
         {/* SCROLLABLE chat messages - ONLY THIS AREA SCROLLS */}
-        <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6">
+        <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2 md:py-3">
           <div className="max-w-4xl mx-auto w-full">
             
             {/* Watermark */}
             {messages.filter(m => m.sender === 'user').length === 0 && (
-              <div className="flex items-center justify-center min-h-[60vh] opacity-20">
+              <div className="flex items-center justify-center min-h-[30vh] sm:min-h-[40vh] opacity-20">
                 <div className="text-center">
-                  <div className="text-8xl mb-4">💬</div>
-                  <h2 className="text-4xl font-bold text-gray-600">AI Well-being Assistant</h2>
-                  <p className="text-gray-500 mt-2 text-lg">Your safe, confidential space</p>
+                  <div className="text-6xl sm:text-8xl mb-2 sm:mb-4">💬</div>
+                  <h2 className="text-2xl sm:text-4xl font-bold text-gray-600">AI Well-being Assistant</h2>
+                  <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-lg">Your safe, confidential space</p>
                 </div>
               </div>
             )}
