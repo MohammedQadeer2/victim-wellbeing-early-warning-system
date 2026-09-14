@@ -131,8 +131,8 @@ export default function AIAssistantPage() {
       userRole="Victim"
       navItems={VICTIM_NAV_ITEMS}
     >
-      {/* Full height with flex - Messages scroll, input fixed */}
-      <div className="h-screen flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
+      {/* Full height with flex - Messages scroll, input fixed - Constrained to fit viewport */}
+      <div className="flex flex-col bg-white" style={{ height: 'calc(100vh - 64px)' }}>
         
         {/* SCROLLABLE chat messages - ONLY THIS AREA SCROLLS */}
         <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2 md:py-3">
