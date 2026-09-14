@@ -3,9 +3,9 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navbar } from './Navbar';
-import { Sidebar, MobileSidebar, MobileSidebarToggle } from './Sidebar';
+import { Sidebar, MobileSidebar } from './Sidebar';
 
 interface NavItem {
   label: string;
@@ -28,39 +28,55 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   // Mobile sidebar state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  
+  // Close sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        // Check if click is not on the logo
+        const target = event.target as HTMLElement;
+        if (!target.closest('[data-logo-trigger]')) {
+          setMobileMenuOpen(false);
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [mobileMenuOpen]);
   
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navbar */}
-      <Navbar userName={userName} userRole={userRole} showDemo={true} />
+      <Navbar 
+        userName={userName} 
+        userRole={userRole} 
+        showDemo={true}
+        onLogoClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      />
       
-      {/* Main container with sidebar */}
-      <div className="flex">
+      {/* Main container with sidebar - Proper height */}
+      <div className="flex min-h-screen">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block">
           <Sidebar navItems={navItems} />
         </div>
         
-        {/* Mobile Sidebar */}
-        <MobileSidebar
-          isOpen={mobileMenuOpen}
-          onClose={() => setMobileMenuOpen(false)}
-          navItems={navItems}
-        />
+        {/* Mobile Sidebar with outside click close */}
+        <div ref={sidebarRef}>
+          <MobileSidebar
+            isOpen={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+            navItems={navItems}
+          />
+        </div>
         
-        {/* Main content area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
+        {/* Main content area - Full height, proper overflow */}
+        <main className="flex-1 overflow-auto">
+          {children}
         </main>
       </div>
-      
-      {/* Mobile menu toggle button */}
-      <MobileSidebarToggle
-        isOpen={mobileMenuOpen}
-        onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-      />
     </div>
   );
 }
