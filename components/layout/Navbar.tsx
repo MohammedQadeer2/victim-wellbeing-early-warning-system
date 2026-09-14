@@ -11,9 +11,10 @@ interface NavbarProps {
   userName?: string;
   userRole?: string;
   showDemo?: boolean;
+  onLogoClick?: () => void;
 }
 
-export function Navbar({ userName, userRole, showDemo = true }: NavbarProps) {
+export function Navbar({ userName, userRole, showDemo = true, onLogoClick }: NavbarProps) {
   const router = useRouter();
   
   // Handle logout (demo mode)
@@ -27,7 +28,28 @@ export function Navbar({ userName, userRole, showDemo = true }: NavbarProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo and title */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3">
+            {/* Mobile: Logo triggers sidebar */}
+            <div className="lg:hidden">
+              <button
+                onClick={onLogoClick}
+                data-logo-trigger
+                className="flex items-center space-x-3 focus:outline-none"
+                aria-label="Toggle menu"
+              >
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xl font-bold">S</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Sentinel</h1>
+                  {showDemo && (
+                    <span className="demo-badge text-xs">Prototype Demo</span>
+                  )}
+                </div>
+              </button>
+            </div>
+            
+            {/* Desktop: Logo links to home */}
+            <Link href="/" className="hidden lg:flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white text-xl font-bold">S</span>
               </div>
