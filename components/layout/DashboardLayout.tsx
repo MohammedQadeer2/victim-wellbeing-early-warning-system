@@ -47,7 +47,7 @@ export function DashboardLayout({
   }, [mobileMenuOpen]);
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Top Navbar */}
       <Navbar 
         userName={userName} 
@@ -57,9 +57,9 @@ export function DashboardLayout({
       />
       
       {/* Main container with sidebar - Proper height */}
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen w-full">
         {/* Desktop Sidebar */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block w-64 flex-shrink-0">
           <Sidebar navItems={navItems} />
         </div>
         

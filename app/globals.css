@@ -18,6 +18,8 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 @layer utilities {
@@ -34,6 +36,7 @@ body {
 html {
   font-size: 16px;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 body {
