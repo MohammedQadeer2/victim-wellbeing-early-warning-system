@@ -1,0 +1,472 @@
+// Sentinel Database Schema
+// AI-Powered Victim Well-being Monitoring System
+// This schema defines all entities and relationships
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER - Authentication & Authorization
+// ============================================================================
+// Represents a person who can log in to the system
+// Can be: VICTIM, COUNSELLOR, or AUTHORITY
+// 
+// Example:
+//   - Victim: A person who registered a case
+//   - Counsellor: A mental health professional assigned to help victims
+//   - Authority: Police/official who can view analytics and alerts
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  
+  // NEVER store password as plain text
+  // Always hash with bcrypt before storing
+  passwordHash String
+  
+  // User role determines what they can access
+  role      Role     @default(VICTIM)
+  
+  // Timestamps for audit trails
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  // A counsellor can be assigned to many cases
+  assignedCases Case[] @relation("CounsellorAssignment")
+  
+  // A user can create/review many interventions
+  interventions Intervention[] @relation("InterventionAssignedTo")
+  
+  // A user can review many alerts
+  reviewedAlerts Alert[] @relation("AlertReviewedBy")
+}
+
+// ============================================================================
+// VICTIM - Case Subject
+// ============================================================================
+// Represents a person who is the victim of a crime
+// One User can have one Victim record
+// One Victim can have multiple Cases
+
+model Victim {
+  id           String   @id @default(cuid())
+  
+  // Demographics
+  age          Int?
+  gender       String?
+  
+  // Reference information
+  referenceId  String   @unique  // Police FIR/case registration number
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relationships
+  // A victim can have multiple cases
+  cases        Case[]
+  
+  @@map("victims")
+}
+
+// ============================================================================
+// CASE - Legal Case
+// ============================================================================
+// Represents a legal case involving a victim
+// Tracks the victim's journey through the justice system
+// 
+// A victim can have one or more cases depending on business rules
+
+model Case {
+  id                  String   @id @default(cuid())
+  victimId            String
+  
+  // Case identification
+  caseNumber          String   @unique
+  title               String
+  description         String?
+  
+  // Case status
+  status              CaseStatus @default(ACTIVE)
+  
+  // Counsellor assignment
+  assignedCounsellorId String?
+  
+  // Timestamps
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Relationships
+  victim              Victim   @relation(fields: [victimId], references: [id], onDelete: Cascade)
+  
+  // A counsellor can be assigned to this case
+  assignedCounsellor  User?    @relation("CounsellorAssignment", fields: [assignedCounsellorId], references: [id])
+  
+  // A case has many check-ins over time (LONGITUDINAL DATA)
+  checkIns            CheckIn[]
+  
+  // A case can have multiple alerts
+  alerts              Alert[]
+  
+  // A case can have multiple interventions
+  interventions       Intervention[]
+  
+  @@index([victimId])
+  @@index([assignedCounsellorId])
+  @@map("cases")
+}
+
+// ============================================================================
+// CHECK_IN - Periodic Assessment
+// ============================================================================
+// Represents a victim completing the periodic well-being questionnaire
+// This is CORE to the system - check-ins are stored as SEPARATE RECORDS
+// This enables LONGITUDINAL ANALYSIS
+//
+// IMPORTANT: Never overwrite check-ins. Always append new ones.
+// This creates a historical record of the victim's well-being over time.
+//
+// Example timeline:
+//   June: CheckIn 1 → RiskScore 42
+//   July: CheckIn 2 → RiskScore 57
+//   August: CheckIn 3 → RiskScore 71
+//   Trend: INCREASING DISTRESS
+
+model CheckIn {
+  id            String   @id @default(cuid())
+  caseId        String
+  
+  // Questionnaire responses stored as JSON
+  // Example: { "q1": "SOMEWHAT", "q2": "VERY", "q3": "SOMEWHAT" }
+  responses     Json
+  
+  // Free-text response from victim (optional)
+  textResponse  String?
+  
+  // Source of the check-in
+  // Extensible for future: SMS, IVRS, MOBILE_APP
+  source        CheckInSource @default(WEB)
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  
+  // Relationships
+  case          Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  // One check-in produces ONE AI analysis (one-to-one)
+  aiAnalysis    AIAnalysis?
+  
+  // One check-in produces ONE risk assessment (one-to-one)
+  riskAssessment RiskAssessment?
+  
+  @@index([caseId])
+  @@index([createdAt])  // Index for trend queries
+  @@map("check_ins")
+}
+
+// ============================================================================
+// AI_ANALYSIS - Signal Extraction
+// ============================================================================
+// AI extracts structured signals from the victim's check-in responses
+// This is NOT the final risk score - it's the raw AI output
+//
+// Why separate from risk calculation?
+//   1. AI layer is isolated from risk logic
+//   2. Easy to replace AI provider without breaking backend
+//   3. Explainability: we can see what signals were extracted
+//   4. Future: Add confidence scores, source tracking
+//
+// Example output:
+//   signals: ["Threat detected", "Severe fear", "Safety concern"]
+//   sentiment: "negative"
+//   emotions: ["fear", "anxiety", "helplessness"]
+
+model AIAnalysis {
+  id          String   @id @default(cuid())
+  checkInId   String   @unique  // One-to-one with CheckIn
+  
+  // Extracted signals from the check-in
+  // Array of risk indicators detected
+  // Example: ["Threat detected", "Severe fear", "Safety concern"]
+  signals     String[]
+  
+  // Overall sentiment of the response
+  // Possible values: "positive", "negative", "neutral", "mixed"
+  sentiment   String
+  
+  // Detected emotions
+  // Example: ["fear", "anxiety", "despair", "hopelessness"]
+  emotions    String[]
+  
+  // Raw AI response (for debugging)
+  rawResponse Json?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  
+  // Relationships
+  checkIn     CheckIn  @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+  
+  // This analysis leads to a risk assessment
+  riskAssessment RiskAssessment?
+  
+  @@index([checkInId])
+  @@map("ai_analyses")
+}
+
+// ============================================================================
+// RISK_ASSESSMENT - Distress Calculation
+// ============================================================================
+// Calculates the victim's distress/risk score based on AI signals
+// IMPORTANT: Never overwrite previous risk assessments
+// Always create new records, preserving historical data
+//
+// The distress score is a PROTOTYPE metric, NOT clinically validated
+// It's designed to be EXPLAINABLE, not to diagnose mental illness
+//
+// Score range: 0-100
+// Risk levels:
+//   0-30   = LOW
+//   31-60  = MODERATE
+//   61-80  = HIGH
+//   81-100 = CRITICAL
+//
+// Why separate from AI?
+//   1. Risk engine has its own logic (not LLM decisions)
+//   2. Easy to modify scoring without touching AI
+//   3. Deterministic: same signals → same score
+//   4. Explainable: shows reasons for the score
+
+model RiskAssessment {
+  id              String   @id @default(cuid())
+  checkInId       String   @unique  // One-to-one with CheckIn
+  
+  // The calculated distress score (0-100)
+  distressScore   Int
+  
+  // Risk level category
+  riskLevel       RiskLevel
+  
+  // Trend compared to previous assessment
+  // STABLE: score unchanged
+  // INCREASING: score increased significantly
+  // DECREASING: score decreased
+  // FLUCTUATING: high variability
+  trend           Trend
+  
+  // Escalation risk (predicts worsening)
+  // Based on: current score, trend, severity of signals
+  escalationRisk  EscalationRisk
+  
+  // Reasons why this risk level was assigned
+  // Explainable AI: show the reasons to counsellors
+  // Example: ["Threat detected", "Severe fear", "Safety concern", "Sleep disturbance"]
+  reasons         String[]
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  
+  // Relationships
+  checkIn         CheckIn  @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+  
+  // AI analysis that led to this assessment
+  aiAnalysis      AIAnalysis @relation(fields: [checkInId], references: [checkInId])
+  
+  // May trigger an alert if risk is high
+  alert           Alert?
+  
+  @@index([checkInId])
+  @@index([riskLevel])  // Index for filtering high-risk cases
+  @@index([createdAt])  // Index for trend analysis
+  @@map("risk_assessments")
+}
+
+// ============================================================================
+// ALERT - High-Risk Flag
+// ============================================================================
+// When a risk assessment indicates HIGH or CRITICAL risk,
+// an Alert is automatically created
+// 
+// Alerts notify counsellors and authorities that a case needs attention
+// Alerts are reviewed by humans - AI does NOT take autonomous action
+//
+// Example alert:
+//   Risk: HIGH
+//   Distress Score: 82
+//   Reasons: Threat detected, Safety concern, Increasing distress trend
+//   Status: OPEN (waiting for review)
+
+model Alert {
+  id                  String   @id @default(cuid())
+  caseId              String
+  riskAssessmentId    String   @unique  // One-to-one with RiskAssessment
+  
+  // Alert details from the risk assessment
+  distressScore       Int
+  reasons             String[]
+  
+  // Alert status
+  // OPEN: needs review
+  // ACKNOWLEDGED: someone saw it
+  // REVIEWED: counsellor reviewed and decided action
+  // RESOLVED: case stabilized or support provided
+  // DISMISSED: false positive
+  status              AlertStatus @default(OPEN)
+  
+  // Who reviewed the alert (optional until reviewed)
+  reviewedBy          User?       @relation("AlertReviewedBy", fields: [reviewedById], references: [id])
+  reviewedById        String?
+  reviewedAt          DateTime?
+  
+  // Timestamps
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Relationships
+  case                Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  riskAssessment      RiskAssessment @relation(fields: [riskAssessmentId], references: [id], onDelete: Cascade)
+  
+  // An alert can trigger multiple interventions
+  interventions       Intervention[]
+  
+  @@index([caseId])
+  @@index([status])  // Index for finding open alerts
+  @@index([createdAt])
+  @@map("alerts")
+}
+
+// ============================================================================
+// INTERVENTION - Support Action
+// ============================================================================
+// When an alert is reviewed, counsellors can recommend interventions
+// Interventions represent support actions taken for the victim
+//
+// Categories:
+//   COUNSELLING: Mental health counseling
+//   SAFETY_ASSESSMENT: Physical safety evaluation
+//   LEGAL_ASSISTANCE: Legal aid
+//   FINANCIAL_ASSISTANCE: Economic support
+//   REHABILITATION_SUPPORT: Rehabilitation services
+//   PROTECTION_RELOCATION_REVIEW: Consider protection or relocation
+//   OTHER: Other support
+//
+// Status tracks the intervention lifecycle:
+//   RECOMMENDED: Counsellor recommended it
+//   IN_PROGRESS: Support is being provided
+//   COMPLETED: Support has ended
+//   NEEDS_REVIEW: Requires follow-up
+//   CANCELLED: Support was cancelled
+
+model Intervention {
+  id              String   @id @default(cuid())
+  
+  // Link to the alert (optional - can create interventions without alert)
+  alertId         String?
+  caseId          String
+  
+  // Intervention details
+  category        InterventionCategory
+  description     String
+  
+  // Who assigned/created this intervention
+  assignedBy      User     @relation("InterventionAssignedTo", fields: [assignedById], references: [id])
+  assignedById    String
+  
+  // Status of the intervention
+  status          InterventionStatus @default(RECOMMENDED)
+  
+  // Notes and updates
+  notes           String?
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relationships
+  alert           Alert?   @relation(fields: [alertId], references: [id], onDelete: SetNull)
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  @@index([alertId])
+  @@index([caseId])
+  @@index([status])
+  @@map("interventions")
+}
+
+// ============================================================================
+// ENUMS - Enumerated Types
+// ============================================================================
+
+enum Role {
+  VICTIM
+  COUNSELLOR
+  AUTHORITY
+}
+
+enum CaseStatus {
+  ACTIVE
+  CLOSED
+  SUSPENDED
+}
+
+enum CheckInSource {
+  WEB
+  CHATBOT
+  SMS
+  IVRS
+  MOBILE_APP
+}
+
+enum RiskLevel {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+enum Trend {
+  STABLE
+  INCREASING
+  DECREASING
+  FLUCTUATING
+}
+
+enum EscalationRisk {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum InterventionCategory {
+  COUNSELLING
+  SAFETY_ASSESSMENT
+  LEGAL_ASSISTANCE
+  FINANCIAL_ASSISTANCE
+  REHABILITATION_SUPPORT
+  PROTECTION_RELOCATION_REVIEW
+  OTHER
+}
+
+enum InterventionStatus {
+  RECOMMENDED
+  IN_PROGRESS
+  COMPLETED
+  NEEDS_REVIEW
+  CANCELLED
+}
