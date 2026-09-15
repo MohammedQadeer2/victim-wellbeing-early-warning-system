@@ -5,6 +5,9 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+// Routes
+import authRoutes from './routes/auth.routes';
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -14,7 +17,7 @@ const app: Express = express();
 // ============================================================================
 // MIDDLEWARE
 // ============================================================================
-
+// Middleware runs on EVERY request before it reaches the route handlers
 
 // Parse incoming JSON request bodies
 // Without this, req.body would be undefined
@@ -56,10 +59,22 @@ app.get('/api/version', (req: Request, res: Response) => {
   res.status(200).json({
     version: '0.1.0',
     name: 'Sentinel Backend - MVP',
-    phase: 1,
-    status: 'foundation',
+    phase: 3,
+    status: 'authentication',
   });
 });
+
+// ============================================================================
+// API ROUTES
+// ============================================================================
+// Mount route handlers
+
+// Authentication routes
+// POST   /api/auth/login           - Login
+// POST   /api/auth/register        - Register
+// GET    /api/auth/me              - Current user
+// GET    /api/auth/demo-users      - Demo credentials (dev only)
+app.use('/api/auth', authRoutes);
 
 // ============================================================================
 // 404 - NOT FOUND
